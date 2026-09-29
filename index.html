@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ben &amp; Holly's Brick Builders</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#e8f4ff;--fg:#1d2a3a;--card:#ffffff;--accent:#e53935;--board:#dfe9f3;--line:#9db4cc}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101a26;--fg:#e8f0f8;--card:#1b2a3b;--accent:#ff6f61;--board:#182534;--line:#3d5872}}
+:root[data-theme="dark"]{--bg:#101a26;--fg:#e8f0f8;--card:#1b2a3b;--accent:#ff6f61;--board:#182534;--line:#3d5872}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:'Trebuchet MS','Comic Sans MS',system-ui,sans-serif;text-align:center}
+h1{margin:14px 10px 4px;font-size:clamp(1.3rem,5vw,2rem)}
+.sub{margin:0 10px 10px;opacity:.8}
+.stage{display:grid;grid-template-columns:1fr minmax(0,440px) 1fr;gap:12px;align-items:end;max-width:1000px;margin:0 auto;padding:0 12px 16px}
+.board{display:flex;flex-direction:column;gap:8px;align-items:center}
+.cwrap{position:relative;width:100%}
+canvas#b{width:100%;aspect-ratio:1;background:var(--board);border:3px solid var(--line);border-radius:12px;display:block;touch-action:manipulation;cursor:pointer}
+.banner{position:absolute;top:10px;left:50%;transform:translateX(-50%) scale(.6);width:90%;padding:8px 10px;background:#fff6dc;color:#4a2a00;border:3px solid #c0392b;border-radius:6px;box-shadow:0 4px 10px rgba(0,0,0,.35);opacity:0;transition:.5s;pointer-events:none;min-height:3.4em}
+.banner.show{opacity:1;transform:translateX(-50%) scale(1)}
+.banner:before,.banner:after{content:"";position:absolute;top:-10px;width:2px;height:10px;background:#fff}
+.banner:before{left:12%}.banner:after{right:12%}
+#b1{font-weight:bold;font-size:clamp(.8rem,3.4vw,1.05rem);min-height:1.3em}
+#b2{font-style:italic;font-size:clamp(.75rem,3.2vw,.95rem);min-height:1.3em}
+.hero{display:flex;flex-direction:column;align-items:center}
+.hero svg{width:min(150px,100%);height:auto;overflow:visible}
+.act svg{animation:hop .3s ease}
+@keyframes hop{50%{transform:translateY(-14px) rotate(-4deg)}}
+.cheer svg{animation:hop .5s ease 4}
+.arm{transform-box:fill-box;transform-origin:50% 8%}
+.wave .arm{animation:wave .6s ease-in-out infinite}
+@keyframes wave{0%,100%{transform:rotate(-150deg)}50%{transform:rotate(-115deg)}}
+.friends{display:none;font-weight:bold;color:var(--accent);padding:2px 8px}
+.friends.show{display:flex}
+.bubble{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 12px;min-height:2.8em;max-width:440px;width:100%}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+.chip{display:flex;align-items:center;gap:6px;background:var(--card);color:var(--fg);border:3px solid var(--line);border-radius:12px;padding:8px 12px;font:inherit;font-weight:bold;cursor:pointer}
+.chip i{width:20px;height:20px;border-radius:5px;background:var(--c);border:2px solid rgba(0,0,0,.25);display:block}
+.chip.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.chip:disabled{opacity:.35;cursor:default}
+.prog{width:100%;height:12px;background:var(--board);border:2px solid var(--line);border-radius:8px;overflow:hidden}
+.prog div{height:100%;width:0;background:var(--accent);transition:width .25s}
+canvas#p{width:72px;height:72px;background:var(--board);border:2px solid var(--line);border-radius:8px}
+.pv{display:flex;align-items:center;gap:8px;text-align:left}
+button.go{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:bold;cursor:pointer}
+@media (max-width:640px){
+.stage{grid-template-columns:1fr 1fr;grid-template-areas:"board board" "ben holly"}
+.board{grid-area:board}#ben{grid-area:ben}#holly{grid-area:holly}
+.hero svg{width:min(105px,100%)}
+}
+</style>
+</head>
+<body>
+<h1>🧱 Ben &amp; Holly's Brick Builders 🧱</h1>
+<p class="sub">Pick a colour, tap a glowing spot, and build the picture. Finish it for a sky surprise!</p>
+<div class="stage">
+<div class="hero" id="ben">
+<svg viewBox="0 0 100 140" aria-label="Ben, cartoon builder">
+<rect x="34" y="96" width="12" height="30" rx="5" fill="#2e5fbf"/><rect x="54" y="96" width="12" height="30" rx="5" fill="#2e5fbf"/>
+<ellipse cx="40" cy="128" rx="10" ry="5" fill="#333"/><ellipse cx="60" cy="128" rx="10" ry="5" fill="#333"/>
+<rect x="28" y="60" width="44" height="42" rx="12" fill="#e53935"/>
+<rect x="14" y="64" width="14" height="30" rx="7" fill="#ffd7b5"/><rect class="arm" x="72" y="64" width="14" height="30" rx="7" fill="#ffd7b5"/>
+<circle cx="50" cy="36" r="24" fill="#ffd7b5"/>
+<path d="M26 34a24 24 0 0 1 48 0z" fill="#ffb300"/><rect x="24" y="30" width="52" height="7" rx="3" fill="#ff8f00"/>
+<circle cx="42" cy="42" r="3" fill="#222"/><circle cx="58" cy="42" r="3" fill="#222"/>
+<path d="M40 51q10 9 20 0" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg><b>Ben</b></div>
+<div class="board">
+<div class="row"><div class="pv"><canvas id="p" width="96" height="96"></canvas><span id="pt">Picture</span></div></div>
+<div class="prog" title="Progress"><div id="pg"></div></div>
+<div id="cnt"><b>Bricks: 0 / 0</b></div>
+<div class="cwrap"><canvas id="b" width="360" height="360"></canvas>
+<div class="banner" id="bn"><div id="b1"></div><div id="b2"></div></div></div>
+<div class="friends" id="fr"></div>
+<div class="row" id="tray"></div>
+<div class="bubble" id="say">Let's build!</div>
+<div class="row"><button class="go" id="nw">🎲 New random picture</button></div>
+</div>
+<div class="hero" id="holly">
+<svg viewBox="0 0 100 140" aria-label="Holly, cartoon builder">
+<rect x="38" y="104" width="9" height="22" rx="4" fill="#ffd7b5"/><rect x="53" y="104" width="9" height="22" rx="4" fill="#ffd7b5"/>
+<ellipse cx="42" cy="128" rx="9" ry="5" fill="#8e24aa"/><ellipse cx="58" cy="128" rx="9" ry="5" fill="#8e24aa"/>
+<path d="M50 58L74 108H26z" fill="#ab47bc"/>
+<rect x="14" y="64" width="13" height="28" rx="6" fill="#ffd7b5"/><rect class="arm" x="73" y="64" width="13" height="28" rx="6" fill="#ffd7b5"/>
+<circle cx="24" cy="30" r="11" fill="#7b4a2a"/><circle cx="76" cy="30" r="11" fill="#7b4a2a"/>
+<circle cx="50" cy="36" r="24" fill="#ffd7b5"/>
+<path d="M26 36a24 24 0 0 1 48 0q-24-14-48 0z" fill="#7b4a2a"/>
+<circle cx="42" cy="42" r="3" fill="#222"/><circle cx="58" cy="42" r="3" fill="#222"/>
+<path d="M40 51q10 9 20 0" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>
+<circle cx="35" cy="48" r="3" fill="#ff8a80" opacity=".7"/><circle cx="65" cy="48" r="3" fill="#ff8a80" opacity=".7"/>
+</svg><b>Holly</b></div>
+</div>
+<script>
+(function(){
+var N=6,CS=60,cv=document.getElementById('b'),x=cv.getContext('2d'),pv=document.getElementById('p'),px=pv.getContext('2d');
+var $=function(i){return document.getElementById(i)},sayEl=$('say'),ben=$('ben'),holly=$('holly');
+var PICS={
+house:["..rr..",".rrrr.","rrrrrr",".ywby.",".ynny."],
+tree:["..yy..",".gogg.","ggggrg",".gggg.","..nn..","..nn.."],
+rocket:["..rr..","..ww..",".wbbw.",".wwww.","rwwwwr","..oy.."],
+rainbow:[".rrrr.","roooor","oyggyo","w....w"],
+castle:["r....y","a.aa.a","abaaba","aannaa"]
+};
+var KEYS=Object.keys(PICS);
+var BASE={g:'#43a047',n:'#8d5a2b',y:'#ffd54f',b:'#42a5f5',w:'#f5f5f5',o:'#ff9800',a:'#9e9e9e'};
+var NAMES={g:'green',n:'brown',y:'yellow',b:'blue',w:'white',o:'orange',a:'grey'};
+var REDS=[['#e53935','red'],['#8e24aa','purple'],['#039be5','sky blue'],['#fb8c00','orange'],['#d81b60','pink']];
+var SLOGANS=["Building bricks, building smiles!","Together we stack up the fun!","Every brick is a happy hello!","Dream it, snap it, share it!"];
+var PRAISE=["Nice one!","Snap! Perfect fit!","Great building!","Wow, super!","You're a brick star!"];
+var P,NM,cells,map,sel,cur,complete,tc,turn,timers=[],stars=[],waver;
+for(var s=0;s<48;s++)stars.push({x:Math.random()*360,y:Math.random()*230,r:1+Math.random()*3,p:Math.random()*6});
+function shade(h){var n=parseInt(h.slice(1),16);return'rgb('+((n>>16)*.72|0)+','+(((n>>8)&255)*.72|0)+','+((n&255)*.72|0)+')'}
+function brick(c,cs,col,cx,cy,off){
+c.save();c.translate(0,off||0);var X=cx*cs,Y=cy*cs,rr=(c.roundRect||c.rect);
+c.fillStyle=shade(col);c.beginPath();rr.call(c,X+1,Y+cs*.22,cs-2,cs*.76,cs*.1);c.fill();
+c.fillStyle=col;c.beginPath();rr.call(c,X+1,Y+cs*.22,cs-2,cs*.64,cs*.1);c.fill();
+c.fillStyle=shade(col);c.beginPath();rr.call(c,X+cs*.27,Y+cs*.05,cs*.46,cs*.22,cs*.06);c.fill();
+c.fillStyle=col;c.beginPath();rr.call(c,X+cs*.27,Y+cs*.05,cs*.46,cs*.17,cs*.06);c.fill();
+c.restore()}
+function say(t){sayEl.textContent=t}
+function hop(el){el.classList.add('act');setTimeout(function(){el.classList.remove('act')},300)}
+function typeTo(el,s,cb){el.textContent='';var i=0,id=setInterval(function(){el.textContent=s.slice(0,++i);if(i>=s.length){clearInterval(id);if(cb)cb()}},60);timers.push(id)}
+$('fr').textContent='Waving hello to Maija, Mani & Boo!';
+function supported(q){var b=map[(q.r+1)+','+q.c];return!b||b.done}
+function upd(){var d=cells.filter(function(q){return q.done}).length;$('cnt').innerHTML='<b>Bricks: '+d+' / '+cells.length+'</b>';$('pg').style.width=(d/cells.length*100)+'%'}
+function tray(){var box=$('tray');box.innerHTML='';var cnt={},order=[];
+cells.forEach(function(q){if(order.indexOf(q.ch)<0)order.push(q.ch);if(!q.done)cnt[q.ch]=(cnt[q.ch]||0)+1});
+if(!cnt[sel]){for(var i=0;i<order.length;i++)if(cnt[order[i]]){sel=order[i];break}}
+order.forEach(function(ch){var b=document.createElement('button');b.className='chip'+(ch===sel?' on':'');b.style.setProperty('--c',P[ch]);
+b.innerHTML='<i></i>'+NM[ch]+' ×'+(cnt[ch]||0);b.disabled=!cnt[ch];b.onclick=function(){sel=ch;tray()};box.appendChild(b)})}
+function start(){
+timers.forEach(clearInterval);timers=[];
+var k;do{k=KEYS[Math.floor(Math.random()*KEYS.length)]}while(k===cur);cur=k;
+var r=REDS[Math.floor(Math.random()*REDS.length)];P=Object.assign({r:r[0]},BASE);NM=Object.assign({r:r[1]},NAMES);
+var pic=PICS[k],off=N-pic.length;cells=[];map={};
+for(var y=pic.length-1;y>=0;y--)for(var i=0;i<N;i++){var ch=pic[y].charAt(i);if(ch!=='.'){var q={c:i,r:y+off,ch:ch,done:false,t0:0,wob:0};cells.push(q);map[q.r+','+q.c]=q}}
+sel=cells[0].ch;complete=false;turn=0;
+px.clearRect(0,0,96,96);cells.forEach(function(q){brick(px,16,P[q.ch],q.c,q.r)});
+$('pt').textContent='Build the '+k+' ('+cells.length+' bricks)';
+$('bn').classList.remove('show');$('fr').classList.remove('show');
+ben.classList.remove('wave','cheer');holly.classList.remove('wave','cheer');
+$('b1').textContent='';$('b2').textContent='';
+tray();upd();say('Ben & Holly: Pick a colour, then tap a dashed spot. Start at the bottom!')}
+function win(t){
+complete=true;tc=t;waver=Math.random()<.5?ben:holly;var other=waver===ben?holly:ben;
+waver.classList.add('wave');other.classList.add('cheer');
+say((waver===ben?'Ben':'Holly')+': Hi Maija, Mani and Boo! Look what we built! 🎉');
+$('fr').classList.add('show');$('bn').classList.add('show');
+var s=SLOGANS[Math.floor(Math.random()*SLOGANS.length)];
+typeTo($('b1'),'Hi Maija, Mani & Boo! 👋',function(){typeTo($('b2'),s)})}
+cv.addEventListener('pointerdown',function(e){
+if(complete)return;var r=cv.getBoundingClientRect(),c=Math.floor((e.clientX-r.left)/r.width*N),rw=Math.floor((e.clientY-r.top)/r.height*N),q=map[rw+','+c],t=performance.now();
+if(!q||q.done)return;
+if(!supported(q)){q.wob=t;say('Build the bricks underneath first!');return}
+if(q.ch!==sel){q.wob=t;say('Hmm, that spot needs a '+NM[q.ch]+' brick!');return}
+q.done=true;q.t0=t;hop(turn++%2?holly:ben);say((turn%2?'Holly: ':'Ben: ')+PRAISE[Math.floor(Math.random()*PRAISE.length)]);
+upd();tray();if(cells.every(function(z){return z.done}))setTimeout(function(){win(performance.now())},450)});
+function star(cx,cy,r){x.beginPath();for(var i=0;i<10;i++){var a=i*Math.PI/5-Math.PI/2,rad=i%2?r*.45:r;x.lineTo(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad)}x.closePath();x.fill()}
+function sky(t,a){
+x.save();x.globalAlpha=a;var g=x.createLinearGradient(0,0,0,360);
+g.addColorStop(0,'#1b1f5e');g.addColorStop(.55,'#7b3fa0');g.addColorStop(.85,'#ff8a65');g.addColorStop(1,'#ffcc80');
+x.fillStyle=g;x.fillRect(0,0,360,360);
+x.fillStyle='#fff';stars.forEach(function(s){x.globalAlpha=a*(.3+.7*Math.abs(Math.sin(t/500+s.p)));star(s.x,s.y,s.r+1)});
+x.globalAlpha=a;x.fillStyle='#fff6c8';x.beginPath();x.arc(305,95,20,0,7);x.fill();
+x.fillStyle='#2a2670';x.beginPath();x.arc(313,89,18,0,7);x.fill();
+x.fillStyle='rgba(255,255,255,.75)';
+[0,1].forEach(function(k){var cx=((t/45+k*220)%480)-60,cy=150+k*45;x.beginPath();x.arc(cx,cy,14,0,7);x.arc(cx+16,cy-8,18,0,7);x.arc(cx+34,cy,14,0,7);x.fill()});
+var ph=(t%5000)/5000;if(ph<.15){var p=ph/.15;x.strokeStyle='#fff';x.lineWidth=2;x.beginPath();x.moveTo(40+p*220,15+p*80);x.lineTo(15+p*220,p*80);x.stroke()}
+x.fillStyle='#2e7d4f';x.beginPath();x.ellipse(180,412,270,92,0,0,7);x.fill();
+x.restore()}
+function frame(t){
+x.clearRect(0,0,360,360);
+if(complete)sky(t,Math.min(1,(t-tc)/1500));
+cells.forEach(function(q){
+if(q.done){var p=Math.min(1,(t-q.t0)/300),e=1-Math.pow(1-p,3);brick(x,CS,P[q.ch],q.c,q.r,-(1-e)*200);return}
+if(complete)return;
+var w=q.wob&&t-q.wob<400?Math.sin((t-q.wob)/25)*5:0;
+x.save();x.translate(w,0);x.globalAlpha=.25;brick(x,CS,P[q.ch],q.c,q.r);x.globalAlpha=1;
+if(supported(q)){var on=q.ch===sel;x.strokeStyle='#ff9800';x.globalAlpha=on?.5+.5*Math.abs(Math.sin(t/250)):.5;x.lineWidth=on?3:1.5;x.setLineDash([7,5]);x.strokeRect(q.c*CS+3,q.r*CS+CS*.22,CS-6,CS*.72)}
+x.restore()});
+requestAnimationFrame(frame)}
+$('nw').onclick=start;
+start();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
