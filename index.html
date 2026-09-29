@@ -42,13 +42,16 @@ canvas#b{width:100%;aspect-ratio:1;background:var(--board);border:3px solid var(
 .chip:disabled{opacity:.35;cursor:default}
 .prog{width:100%;height:12px;background:var(--board);border:2px solid var(--line);border-radius:8px;overflow:hidden}
 .prog div{height:100%;width:0;background:var(--accent);transition:width .25s}
-canvas#p{width:72px;height:72px;background:var(--board);border:2px solid var(--line);border-radius:8px}
-.pv{display:flex;align-items:center;gap:8px;text-align:left}
+canvas#p{width:100%;height:auto;aspect-ratio:1;background:var(--board);border:2px solid var(--line);border-radius:8px}
+.buildrow{display:flex;gap:8px;align-items:flex-start;width:100%}
+.pv{display:flex;flex-direction:column;align-items:center;gap:4px;width:78px;flex:none;text-align:center;font-size:.75rem;font-weight:bold}
+.cwrap{flex:1;min-width:0}
 button.go{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:bold;cursor:pointer}
 @media (max-width:640px){
 .stage{grid-template-columns:1fr 1fr;grid-template-areas:"board board" "ben holly"}
 .board{grid-area:board}#ben{grid-area:ben}#holly{grid-area:holly}
 .hero svg{width:min(105px,100%)}
+.pv{width:62px}
 }
 </style>
 </head>
@@ -68,11 +71,11 @@ button.go{background:var(--accent);color:#fff;border:0;border-radius:10px;paddin
 <path d="M40 51q10 9 20 0" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>
 </svg><b>Ben</b></div>
 <div class="board">
-<div class="row"><div class="pv"><canvas id="p" width="96" height="96"></canvas><span id="pt">Picture</span></div></div>
 <div class="prog" title="Progress"><div id="pg"></div></div>
 <div id="cnt"><b>Bricks: 0 / 0</b></div>
+<div class="buildrow"><div class="pv"><canvas id="p" width="96" height="96"></canvas><span id="pt">Picture</span></div>
 <div class="cwrap"><canvas id="b" width="360" height="360"></canvas>
-<div class="banner" id="bn"><div id="b1"></div><div id="b2"></div></div></div>
+<div class="banner" id="bn"><div id="b1"></div><div id="b2"></div></div></div></div>
 <div class="friends" id="fr"></div>
 <div class="row" id="tray"></div>
 <div class="bubble" id="say">Let's build!</div>
